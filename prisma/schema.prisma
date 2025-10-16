@@ -21,7 +21,7 @@ datasource db {
 model User {
   id        String    @id @default(cuid()) @map("_id")
   name      String
-  email     String    @unique
+  email     String    // unique制約は不要, 10/16追記
   articles  Article[]
 }
 

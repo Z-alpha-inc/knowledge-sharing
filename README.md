@@ -5,6 +5,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 First, run the development server:
 
 ```bash
+npm install # これでできなければnode_modulesとpackage-lock.jsonを削除して、再度npm install
 npm run dev # 今回はこちら
 # yarn dev
 # pnpm dev

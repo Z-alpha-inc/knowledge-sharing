@@ -1,4 +1,13 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# knowledge-sharing
+
+## 技術スタック
+
+### フロントエンド
+- Next.js(React)
+- TailwindCSS
+- TypeScript
+- shadcn/ui(Theme: Orange)
+- Lucide React(shadcnインストール時に付随)
 
 ## Getting Started
 

@@ -27,17 +27,18 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+## prismaセットアップ手順(mongo)
+1. `npm install prisma --save-dev`
+2. `npx prisma init`
+3. 
+```
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. `DATABASE_URL="mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/your-db-name?retryWrites=true&w=majority"`を設定
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. `npx prisma db push`でモデルをデータベースに反映
+(後から更新できるので、別に最初は最小モデルでOK)

@@ -25,11 +25,14 @@ model User {
   articles  Article[]
 }
 
+// @relation, リレーションフィールド = データベースには存在しない仮想的なフィールド
+// authorIdを使ってUserテーブルを検索し、著者情報を結合したものをautherとして出力
+// 3つのフィールドだけPOSTすればいい
 model Article {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid()) @map("_id") // @defaultで一意のIDが自動生成
   title     String
   content   String
   authorId  String
   author    User     @relation(fields: [authorId], references: [id])
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) // @defaultで時間が自動生成
 }

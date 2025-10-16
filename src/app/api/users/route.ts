@@ -9,9 +9,9 @@ export async function GET() {
   try{
     const users = await prisma.user.findMany({
       // 後に関連するauthorの情報も一緒に取得
-      //include: {
-      //  articles: true,
-      //},
+      include: {
+        articles: true,
+      },
       orderBy: {
         name: 'desc',
       }

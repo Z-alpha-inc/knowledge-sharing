@@ -11,10 +11,13 @@
 
 ## Getting Started
 
-First, run the development server:
+1. .envファイルの中身を取得
+
+2. Run the development server:
 
 ```bash
 npm install # これでできなければnode_modulesとpackage-lock.jsonを削除して、再度npm install
+npx prisma generate # スキーマに関する内容を取り入れる, gerated/prismaフォルダの生成
 npm run dev # 今回はこちら
 # yarn dev
 # pnpm dev

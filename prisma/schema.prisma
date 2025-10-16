@@ -10,6 +10,23 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+// prisma/schema.prisma (最初はこれだけでOK)
+model User {
+  id        String    @id @default(cuid()) @map("_id")
+  name      String
+  email     String    @unique
+  articles  Article[]
+}
+
+model Article {
+  id        String   @id @default(cuid()) @map("_id")
+  title     String
+  content   String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
 }

@@ -15,10 +15,10 @@ export async function GET(
     const article = await prisma.article.findUnique({
         where:{
             id: id // ここに取得したい記事のIDを指定
-        }
-        //include: {
-        //  author: true,
-        //},
+        },
+        include: {
+          author: true,
+        },
     });
 
     if (!article) {
@@ -46,10 +46,7 @@ export async function DELETE(
     const article = await prisma.article.delete({
         where:{
             id: id // ここに削除したい記事のIDを指定
-        }
-        //include: {
-        //  author: true,
-        //},
+        },
     });
 
     if (!article) {
@@ -79,10 +76,7 @@ export async function PUT(
         where:{
             id: id // ここに削除したい記事のIDを指定
         },
-        data: body
-        //include: {
-        //  author: true,
-        //},
+        data: body,
     });
 
     if (!article) {

@@ -42,6 +42,18 @@ model Article {
   title     String
   content   String
   authorId  String
+  status    Status   @default(DRAFT)
   author    User     @relation(fields: [authorId], references: [id])
+  department   String
+  youtubeLinks String[] // []なので?は不要
+  siteLinks    String[] // []なので?は不要
   createdAt DateTime @default(now()) // @defaultで時間が自動生成
+  updatedAt DateTime @updatedAt      // updatedAtで更新時に時間が自動生成
+}
+
+enum Status {
+  DRAFT
+  IN_REVIEW
+  PUBLISHED
+  ARCHIVED
 }

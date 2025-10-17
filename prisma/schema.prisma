@@ -22,7 +22,16 @@ model User {
   id        String    @id @default(cuid()) @map("_id")
   name      String
   email     String    // unique制約は不要, 10/16追記
+  role        Role     @default(VIEWER)
+  department  String  // sales, engineering, pr, all
   articles  Article[]
+}
+
+enum Role {
+  ADMIN
+  REVIEWER
+  CONTRIBUTOR
+  VIEWER
 }
 
 // @relation, リレーションフィールド = データベースには存在しない仮想的なフィールド

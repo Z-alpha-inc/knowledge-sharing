@@ -63,3 +63,36 @@ export async function DELETE(
   }
 
 }
+
+// 記事1つを更新するAPI, PUT /api/articles/[id]を構築
+// .httpメソッドでデータも更新できる
+export async function PUT(
+    request: NextRequest, // 使うわけではないがこれがないと、URLパラメータが取得できない
+    { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const body = await request.json();
+
+  // prismaを使うことで、prisma.article.update()でarticlesテーブルの全データを取得
+  try{
+    const article = await prisma.article.update({
+        where:{
+            id: id // ここに削除したい記事のIDを指定
+        },
+        data: body
+        //include: {
+        //  author: true,
+        //},
+    });
+
+    if (!article) {
+      return NextResponse.json({ error: 'Article not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(article, { status: 200 });
+  }catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: 'Failed to delete an article' }, { status: 500 });
+  }
+
+}

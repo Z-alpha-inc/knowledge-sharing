@@ -8,7 +8,7 @@ export async function GET() {
   // prismaを使うことで、prisma.article.findMany()でarticlesテーブルの全データを取得
   try{
     const users = await prisma.user.findMany({
-      // 後に関連するauthorの情報も一緒に取得
+      // 後に関連するauthorの情報も一緒に取得 
       include: {
         articles: true,
       },
@@ -31,14 +31,18 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email } = body; // スキーマにはpasswordがないため、ここではnameとemail
+    const { name, email, department } = body; // スキーマにはpasswordがないため、ここではnameとemail
 
     if (!name || !email) {
     return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
     }
 
     const newUser = await prisma.user.create({
-        data: { name, email },
+        data: { 
+            name, 
+            email,
+            department,
+        },
     });
 
     return NextResponse.json(newUser, { status: 201 });

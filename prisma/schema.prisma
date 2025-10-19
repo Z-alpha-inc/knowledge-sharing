@@ -22,7 +22,16 @@ model User {
   id        String    @id @default(cuid()) @map("_id")
   name      String
   email     String    // unique制約は不要, 10/16追記
+  role        Role     @default(VIEWER)
+  department  String  // sales, engineering, pr, all
   articles  Article[]
+}
+
+enum Role {
+  ADMIN
+  REVIEWER
+  CONTRIBUTOR
+  VIEWER
 }
 
 // @relation, リレーションフィールド = データベースには存在しない仮想的なフィールド
@@ -33,6 +42,18 @@ model Article {
   title     String
   content   String
   authorId  String
+  status    Status   @default(DRAFT)
   author    User     @relation(fields: [authorId], references: [id])
+  department   String
+  youtubeLinks String[] // []なので?は不要
+  siteLinks    String[] // []なので?は不要
   createdAt DateTime @default(now()) // @defaultで時間が自動生成
+  updatedAt DateTime @updatedAt      // updatedAtで更新時に時間が自動生成
+}
+
+enum Status {
+  DRAFT
+  IN_REVIEW
+  PUBLISHED
+  ARCHIVED
 }

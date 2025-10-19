@@ -30,7 +30,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, content, authorId } = body;
+    const { title, content, authorId, department, youtubeLinks, siteLinks } = body;
 
     // authorIdがない場合はエラーを返す
     if (!authorId) {
@@ -42,6 +42,9 @@ export async function POST(request: NextRequest) {
         title,
         content,
         authorId, // 送られてきたIDで記事を作成
+        department,
+        youtubeLinks,
+        siteLinks,
       },
     });
 

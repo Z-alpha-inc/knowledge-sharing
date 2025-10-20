@@ -10,16 +10,14 @@ export const ArticleSchema = z.object({
     department: z.enum(['sales', 'engineering', 'pr', 'all'], {
         message: '有効な部門を選択してください', // messageオプションでエラーメッセージをカスタマイズ
     }),
-    youtubeLinks: z.array(
-        z.url('有効なYouTube URLを入力してください') // z.string().url()は新バージョンでは非推奨
-        .optional()
-        .or(z.literal('')) // 空文字列も許容
-    ).optional(),
-    siteLinks: z.array(
-        z.url('有効なWebサイト URLを入力してください') // z.string().url()は新バージョンでは非推奨
-        .optional()
-        .or(z.literal('')) // 空文字列も許容
-    ).optional(),
+    // react-hook-form の useFieldArray は「配列の中の要素がオブジェクトであること」を前提に設計
+    // https://react-hook-form.com/docs/usefieldarray
+    youtubeLinks: z.array(z.object({
+        url: z.url('有効なYouTube URLを入力してください') // オブジェクト配列にしてuseFieldArrayで扱いやすくする
+    })).optional(),
+    siteLinks: z.array(z.object({
+        url: z.url('有効なWebサイト URLを入力してください') // オブジェクト配列にしてuseFieldArrayで扱いやすくする
+    })).optional(),
 });
 
 // Zodスキーマを変更すると、ArticleFormData型も自動的に更新されるため、型定義の手間を省ける

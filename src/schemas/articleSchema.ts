@@ -6,7 +6,7 @@ export const ArticleSchema = z.object({
     title: z.string().min(1, 'タイトルは必須です'),
     content: z.string().min(1, '内容は必須です'),
     // 本来は認証システムから取得するが、現状ではデフォルトor従業員に入力させる
-    authorId: z.uuid('有効なユーザーIDを入力してください'), // UUID形式を想定
+    authorId: z.string().min(1, 'ユーザーIDは必須です'), // zodはuuid形式だが、prismaはcuid形式で合わない
     department: z.enum(['sales', 'engineering', 'pr', 'all'], {
         message: '有効な部門を選択してください', // messageオプションでエラーメッセージをカスタマイズ
     }),

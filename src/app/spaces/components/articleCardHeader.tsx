@@ -1,13 +1,13 @@
 'use client';
 import { Badge } from '@/components/ui/badge';
 
-type CardHeaderProps = {
+type ArticleCardHeaderProps = {
     name: string;
     createdAt: string;
 };
 
 // 記事カードヘッダー部分コンポーネント
-export const CardHeader = ({ name, createdAt }: CardHeaderProps) => {
+export const ArticleCardHeader = ({ name, createdAt }: ArticleCardHeaderProps) => {
     const formatDate = (dateString: string) => {
         const today = new Date(dateString);
         const formatted = today

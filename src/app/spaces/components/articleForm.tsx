@@ -4,7 +4,6 @@
 import { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import MDEditor from '@uiw/react-md-editor';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -19,6 +18,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+
+import { MarkdownEditor } from '@/app/spaces/components/markdownEditor';
 
 import { ArticleSchema, ArticleFormData } from '@/schemas/articleSchema'; // スキーマをインポート
 
@@ -163,26 +164,14 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
             </div>
 
             {/* Markdownエディタ */}
-            <div data-color-mode="light">
-              <Label htmlFor="content" className="sr-only">内容</Label>
-              <MDEditor
-                value={markdownContent}
-                onChange={(value) => {
-                  setMarkdownContent(value);
-                  setValue('content', value || ''); // react-hook-formに値を設定
+            <MarkdownEditor
+                value={markdownContent} // markdownContent はプレビューの**「元データ」、実際に書いている文章
+                onChange={(value) => { 
+                    setMarkdownContent(value); // markdown更新を担うsetMarkdownContent 関数
+                    setValue('content', value || ''); // react-hook-formに設定する値も更新
                 }}
-                textareaProps={{
-                  placeholder: '記事の内容をMarkdown形式で記述してください',
-                  id: 'content',
-                }}
-                preview="live" // リアルタイムプレビュー
-                height={300}
-                className={`border ${errors.content ? 'border-red-500' : 'border-gray-300'} rounded-md`}
-              />
-              {errors.content && (
-                <p className="text-red-500 text-xs mt-1">{errors.content.message}</p>
-              )}
-            </div>
+                error={errors.content?.message}
+            />
 
             {/* 詳細オプション展開ボタン */}
             <button

@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import MDEditor from '@uiw/react-md-editor';
 import { ArticleCardHeader } from '@/app/spaces/components/articleCardHeader';
 import { YouTubeCard } from '@/app/spaces/components/youtubeEmbed';
+import { LinkPreviewCard } from '@/app/spaces/components/linkPreviewCard';
 
 type ArticleCardProps = {
     article: Article;
@@ -40,15 +41,27 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
 
                 {/* YouTubeリンク */}
                 {article.youtubeLinks?.length > 0 && (
-                <div className="mt-4 space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        YouTube動画
-                    </h4>
-                    {/* 要素の順番が変わったときに 誤って別の要素を再利用を防ぐためにkeyを付与 */}
-                    {article.youtubeLinks.map((link) => (
-                        <YouTubeCard key={link} url={link} />
-                    ))}
-                </div>
+                    <div className="mt-4 space-y-3">
+                        <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            YouTube動画
+                        </h4>
+                        {/* 要素の順番が変わったときに 誤って別の要素を再利用を防ぐためにkeyを付与 */}
+                        {article.youtubeLinks.map((link) => (
+                            <YouTubeCard key={link} url={link} />
+                        ))}
+                    </div>
+                )}
+
+                 {/* サイトリンクプレビュー */}
+                {article.siteLinks?.length > 0 && (
+                    <div className="mt-4 space-y-3">
+                        <h4 className="text-sm font-semibold text-gray-700">
+                            Webサイト
+                        </h4>
+                        {article.siteLinks.map((link) => (
+                            <LinkPreviewCard key={link} url={link} />
+                        ))}
+                    </div>
                 )}
             </div>
         </Card>

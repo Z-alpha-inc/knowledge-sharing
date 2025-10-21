@@ -44,7 +44,7 @@ export const YouTubeCard = ({ url }: YouTubeEmbedProps) => {
   }
 
   return (
-    <Card className="overflow-hidden bg-gray-50">
+    <Card className="overflow-hidden bg-white-50">
         <div className="p-3 bg-white border-t">
             <a
                 href={url}
@@ -55,9 +55,21 @@ export const YouTubeCard = ({ url }: YouTubeEmbedProps) => {
                 {url}
             </a>
         </div>
-        <div className="rounded-md overflow-hidden">
-            {/* 🚀 Lite YouTube Embed (iframe lazy load + nocookie対応) */}
-            <YouTubeEmbed videoid={videoId} params="rel=0" style="max-width: 100%;" />
+        {/* 🎬 Slack風・コンパクトYouTubeプレビュー */}
+        <div className="flex justify-center p-2">
+            <div
+                className="relative rounded-lg overflow-hidden"
+                style={{
+                    width: '480px',     // 👈 横幅を固定して小さく
+                    height: '270px',    // 👈 16:9比率（640 * 9 / 16）
+                }}
+            >
+            <YouTubeEmbed
+                videoid={videoId}
+                params="rel=0"
+                style="width:100%;height:100%;border-radius:0.5rem;"
+            />
+            </div>
         </div>
     </Card>
   );

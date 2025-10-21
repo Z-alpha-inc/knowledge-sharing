@@ -31,15 +31,12 @@ interface ArticleFormModalProps {
 
 export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFormModalProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [markdownContent, setMarkdownContent] = useState<string | undefined>(''); // MDEditorの状態
     const [isExpanded, setIsExpanded] = useState(false); // 詳細オプションの展開状態
 
     const {
         register, // HTMLの標準的な入力欄（<input> や <textarea> など）を react-hook-form に「登録」(useStateでわざわざ取得しなくていい)
         handleSubmit, // onSubmitで提出する際にバリデーションを行うなど、提出周りを担う
         control, // register が使えない複雑なUIコンポーネント（例: 動的な入力欄）をフォームに接続する
-        setValue, // フィールドの値をプログラム的に設定(setすればmarkdownの内容が変わるたびに実行してセット)(control+Controllerで代替できなくもない)
-        watch, // 指定したフィールドの値を「監視」して変われば再レンダリング
         formState: { errors }, // formState はフォームの現在の状態（送信中か、エラーがあるかなど）を保持するオブジェクトで、今はerrorsだけを取得
         reset, // フォームの全フィールドを defaultValues（初期値）に戻す
     } = useForm<ArticleFormData>({
@@ -85,7 +82,6 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
     useEffect(() => {
         if (!isOpen) {
             reset();
-            setMarkdownContent('');
             setIsExpanded(false);
         }
     }, [isOpen, reset]);
@@ -119,8 +115,6 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
 
             alert('記事が正常に投稿されました！');
             reset(); // フォームをリセット
-            setValue('content', ''); // MDEditorの値をクリア
-            setMarkdownContent(''); // MDEditorの内部状態をクリア
             setIsExpanded(false); // 詳細オプションを閉じる
             onArticlePosted(); // 記事一覧をリフレッシュしてモーダルを閉じる
         } catch (error) {
@@ -172,13 +166,17 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
                 </div>
 
                 {/* Markdownエディタ */}
-                <MarkdownEditor
-                    value={markdownContent} // markdownContent はプレビューの**「元データ」、実際に書いている文章
-                    onChange={(value) => { 
-                        setMarkdownContent(value); // markdown更新を担うsetMarkdownContent 関数
-                        setValue('content', value || ''); // react-hook-formに設定する値も更新
-                    }}
-                    error={errors.content?.message}
+                <Controller
+                    control={control} // 司令塔を渡す
+                    name="content" // 管理するフィールド名
+                    // 仲介役が "field" と "fieldState" を用意してくれる
+                    render={({ field, fieldState }) => ( 
+                        <MarkdownEditor
+                            value={field.value} // 司令塔が管理する「現在の値」を渡す
+                            onChange={field.onChange} // 司令塔が管理する「変更関数」を渡す
+                            error={fieldState.error?.message} // 司令塔が管理する「エラー状態」を渡す
+                        />
+                    )}
                 />
 
                 {/* 詳細オプション展開ボタン */}
@@ -219,16 +217,16 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
 
                         {/* ユーザーID入力 (一時的) */}
                         <div>
-                        <Label htmlFor="authorId" className="block text-sm font-medium text-gray-700">投稿者ID (一時的):</Label>
-                        <Input
-                            id="authorId"
-                            placeholder="例: clx0i6s73000008lcg3g37tvy"
-                            {...register('authorId')}
-                            className={`text-sm ${errors.authorId ? 'border-red-500' : 'border-gray-300'}`}
-                        />
-                        {errors.authorId && (
-                            <p className="text-red-500 text-xs mt-1">{errors.authorId.message}</p>
-                        )}
+                            <Label htmlFor="authorId" className="block text-sm font-medium text-gray-700">投稿者ID (一時的):</Label>
+                            <Input
+                                id="authorId"
+                                placeholder="例: clx0i6s73000008lcg3g37tvy"
+                                {...register('authorId')}
+                                className={`text-sm ${errors.authorId ? 'border-red-500' : 'border-gray-300'}`}
+                            />
+                            {errors.authorId && (
+                                <p className="text-red-500 text-xs mt-1">{errors.authorId.message}</p>
+                            )}
                         </div>
 
                         {/* YouTube URL入力欄 */}

@@ -3,15 +3,18 @@
 import { useState, useEffect } from 'react';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { FileText } from 'lucide-react'; // テキストファイルのようなアイコン
+import { FileText, Plus } from 'lucide-react'; // テキストファイルのようなアイコン
+import { Button } from '@/components/ui/button';
 
 import { Article } from '@/types';
 import { ArticleCard } from '@/app/spaces/components/articleCard';
+import { ArticleFormModal } from '@/app/spaces/components/articleForm'; // モーダル版をインポート
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false); // モーダルの開閉状態
 
   // 依存配列が空で初回レンダリング時に記事を取得
   useEffect(() => {
@@ -36,6 +39,11 @@ export default function ArticlesPage() {
     return name.slice(0, 1).toUpperCase();
   };
 
+  const handleArticlePosted = () => {
+    fetchArticles(); // 記事一覧を更新
+    setIsModalOpen(false); // モーダルを閉じる
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -56,9 +64,20 @@ export default function ArticlesPage() {
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">ナレッジ共有</h1>
-          <p className="text-sm text-gray-600 mt-1">社内の知見を共有しましょう</p>
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">ナレッジ共有</h1>
+            <p className="text-sm text-gray-600 mt-1">社内の知見を共有しましょう</p>
+          </div>
+          
+          {/* ヘッダー右上の投稿ボタン */}
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+          >
+            <Plus className="w-5 h-5" />
+            <span>投稿</span>
+          </Button>
         </div>
       </header>
 
@@ -88,6 +107,13 @@ export default function ArticlesPage() {
           )}
         </div>
       </main>
+
+      {/* モーダル */}
+      <ArticleFormModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onArticlePosted={handleArticlePosted}
+      />
     </div>
   );
 }

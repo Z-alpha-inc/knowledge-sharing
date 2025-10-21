@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {
-  Plus,
   X,
   Play,
   Globe,
@@ -20,6 +19,7 @@ import {
 
 import { MarkdownEditor } from '@/app/spaces/components/markdownEditor';
 import { DepartmentSelector } from '@/app/spaces/components/DepartmentSelector';
+import { UrlFieldArray } from '@/app/spaces/components/UrlFieldArray';
 
 import { ArticleSchema, ArticleFormData } from '@/schemas/articleSchema'; // スキーマをインポート
 
@@ -51,31 +51,6 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
         youtubeLinks: [], // 最初は入力欄を表示しない
         siteLinks: [],    // 最初は入力欄を表示しない
         },
-    });
-    
-    // 「動的な入力欄のリスト」(入力の数や入力の有無が固定でない値)を管理（useFieldArray フック）
-    // 名前を変更することで、それぞれの担当者が持つ道具を区別でき、2回呼び出しを防ぐ
-    // 動的入力欄が一つなら、youtubeFieldsとかは使わず、fieldsだけで済む
-    // 各入力欄の値自体はinputなのでregisterで管理可能
-    // registerは単一フィールドの管理なので、useFieldArrayは配列フィールドの管理をすることで、各要素でregisterを使える
-    // YouTube URLの動的入力欄
-    const {
-        fields: youtubeFields, // 現在表示すべき入力欄のリスト（オブジェクト配列）, 動的だからここで数などを管理する
-        append: appendYoutube, // リストに新しい項目を追加する処理
-        remove: removeYoutube, // リストから特定の項目を削除する処理
-    } = useFieldArray({ 
-        control,             // controlを渡すことで、useFieldArrayはuseFormのcontrolと連携
-        name: 'youtubeLinks' // defaultValuesで定義したオブジェクト）の中で担当するフィールド名を指定
-    });
-
-    // サイトURLの動的入力欄
-    const {
-        fields: siteFields,
-        append: appendSite,
-        remove: removeSite,
-    } = useFieldArray({ 
-        control, 
-        name: 'siteLinks' 
     });
 
     // モーダルが閉じられた時にフォームをリセット
@@ -229,87 +204,29 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
                             )}
                         </div>
 
-                        {/* YouTube URL入力欄 */}
-                        <div className="space-y-2">
-                            <Label className="block text-sm font-medium text-gray-700 flex items-center gap-1">
-                                <Play className="w-4 h-4 text-red-500" />
-                                YouTube URL (複数可):
-                            </Label>
-                            {youtubeFields.map((field, index) => (
-                                <div key={field.id} className="flex items-center gap-2">
-                                <Input
-                                    {...register(`youtubeLinks.${index}.url`)}
-                                    placeholder="YouTubeのURLを入力"
-                                    className={`text-sm ${errors.youtubeLinks?.[index]?.url ? 'border-red-500' : 'border-gray-300'}`}
-                                />
-                                {youtubeFields.length > 1 && (
-                                    <Button
-                                        type="button"
-                                        onClick={() => removeYoutube(index)} // 特定の入力欄を削除
-                                        variant="ghost"
-                                        size="icon"
-                                        className="text-gray-500 hover:text-red-500 h-8 w-8"
-                                    >
-                                    <X className="w-4 h-4" />
-                                    </Button>
-                                )}
-                                </div>
-                            ))}
-                            {errors.youtubeLinks && (
-                                <p className="text-red-500 text-xs mt-1">{errors.youtubeLinks.message}</p>
-                            )}
-                            <Button
-                                type="button"
-                                onClick={() => appendYoutube({ url: '' })}
-                                variant="outline"
-                                size="sm"
-                                className="flex items-center gap-1 text-blue-600 border-blue-600 hover:bg-blue-50 h-8 text-xs"
-                            >
-                                <Plus className="w-3 h-3" />
-                                YouTube URLを追加
-                            </Button>
-                        </div>
-
+                        {/* YouTubeURL入力欄 */}
+                        <UrlFieldArray
+                            control={control}
+                            register={register}
+                            errors={errors}
+                            fieldName="youtubeLinks"
+                            label="YouTube URL (複数可):"
+                            placeholder="YouTubeのURLを入力"
+                            icon={<Play className="w-4 h-4 text-red-500" />}
+                            addButtonText="YouTube URLを追加"
+                        />
+                        
                         {/* WebサイトURL入力欄 */}
-                        <div className="space-y-2">
-                            <Label className="block text-sm font-medium text-gray-700 flex items-center gap-1">
-                                <Globe className="w-4 h-4 text-blue-500" />
-                                WebサイトURL (複数可):
-                            </Label>
-                            {siteFields.map((field, index) => (
-                                <div key={field.id} className="flex items-center gap-2">
-                                <Input
-                                    {...register(`siteLinks.${index}.url`)}
-                                    placeholder="WebサイトのURLを入力"
-                                    className={`text-sm ${errors.siteLinks?.[index]?.url ? 'border-red-500' : 'border-gray-300'}`}
-                                />
-                                {siteFields.length > 1 && (
-                                    <Button
-                                        type="button"
-                                        onClick={() => removeSite(index)}
-                                        variant="ghost"
-                                        size="icon"
-                                        className="text-gray-500 hover:text-red-500 h-8 w-8"
-                                    >
-                                    <X className="w-4 h-4" />
-                                    </Button>
-                                )}
-                                </div>
-                            ))}
-                            {errors.siteLinks && (
-                                <p className="text-red-500 text-xs mt-1">{errors.siteLinks.message}</p>
-                            )}
-                            <Button
-                                type="button"
-                                onClick={() => appendSite({ url: '' })}
-                                variant="outline"
-                                size="sm"
-                                className="flex items-center gap-1 text-blue-600 border-blue-600 hover:bg-blue-50 h-8 text-xs"
-                            >
-                                <Plus className="w-3 h-3" />
-                                WebサイトURLを追加
-                            </Button>
-                        </div>
+                        <UrlFieldArray
+                            control={control}
+                            register={register}
+                            errors={errors}
+                            fieldName="siteLinks"
+                            label="WebサイトURL (複数可):"
+                            placeholder="WebサイトのURLを入力"
+                            icon={<Globe className="w-4 h-4 text-blue-500" />}
+                            addButtonText="WebサイトURLを追加"
+                        />
                     </div>
                 )}
 

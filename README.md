@@ -8,6 +8,9 @@
 - TypeScript
 - shadcn/ui(Theme: Orange)
 - Lucide React(shadcnインストール時に付随)
+- react-hook-form(投稿機能のコード量削減など)
+- zod(バリデーションの作成を容易に)
+- @uiw/react-md-editor(markdownプレビューなどを容易に)
 
 ## Getting Started
 

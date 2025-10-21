@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Controller, useForm, useFieldArray } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,7 @@ import { DepartmentSelector } from '@/app/spaces/components/DepartmentSelector';
 import { UrlFieldArray } from '@/app/spaces/components/UrlFieldArray';
 
 import { ArticleSchema, ArticleFormData } from '@/schemas/articleSchema'; // スキーマをインポート
+import { createArticle } from '@/lib/createArticle';
 
 interface ArticleFormModalProps {
   isOpen: boolean;
@@ -64,30 +65,7 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
     const onSubmit = async (data: ArticleFormData) => {
         setIsSubmitting(true);
         try {
-            // 空のURL文字列をフィルターしてからAPIに送信
-            const filteredData = {
-                ...data,
-            youtubeLinks: data.youtubeLinks
-                ?.map(link => link.url?.trim()) // mapでオブジェクトからurl文字列を抽出
-                .filter(url => url !== ''),
-            siteLinks: data.siteLinks
-                ?.map(link => link.url?.trim()) // mapでオブジェクトからurl文字列を抽出
-                .filter(url => url !== ''),
-            };
-
-            const response = await fetch('/api/articles', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(filteredData),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || '記事の投稿に失敗しました');
-            }
-
+            await createArticle(data);
             alert('記事が正常に投稿されました！');
             reset(); // フォームをリセット
             setIsExpanded(false); // 詳細オプションを閉じる

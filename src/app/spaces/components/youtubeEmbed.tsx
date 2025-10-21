@@ -56,20 +56,12 @@ export const YouTubeCard = ({ url }: YouTubeEmbedProps) => {
             </a>
         </div>
         {/* 🎬 Slack風・コンパクトYouTubeプレビュー */}
-        <div className="flex justify-center p-2">
-            <div
-                className="relative rounded-lg overflow-hidden"
-                style={{
-                    width: '480px',     // 👈 横幅を固定して小さく
-                    height: '270px',    // 👈 16:9比率（640 * 9 / 16）
-                }}
-            >
+        <div className="w-2/5 flex-shrink-0 aspect-video">
             <YouTubeEmbed
                 videoid={videoId}
-                params="rel=0"
-                style="width:100%;height:100%;border-radius:0.5rem;"
+                params="rel=0" // 関連動画を非表示
+                style="width:100%;height:100%;" // 親のdiv(16:9)いっぱいに広げる
             />
-            </div>
         </div>
     </Card>
   );

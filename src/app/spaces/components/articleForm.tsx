@@ -2,13 +2,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { Controller, useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Plus,
   X,
@@ -20,6 +19,7 @@ import {
 } from 'lucide-react';
 
 import { MarkdownEditor } from '@/app/spaces/components/markdownEditor';
+import { DepartmentSelector } from '@/app/spaces/components/DepartmentSelector';
 
 import { ArticleSchema, ArticleFormData } from '@/schemas/articleSchema'; // スキーマをインポート
 
@@ -93,41 +93,41 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
     const onSubmit = async (data: ArticleFormData) => {
         setIsSubmitting(true);
         try {
-        // 空のURL文字列をフィルターしてからAPIに送信
-        const filteredData = {
-            ...data,
-        youtubeLinks: data.youtubeLinks
-            ?.map(link => link.url?.trim()) // mapでオブジェクトからurl文字列を抽出
-            .filter(url => url !== ''),
-        siteLinks: data.siteLinks
-            ?.map(link => link.url?.trim()) // mapでオブジェクトからurl文字列を抽出
-            .filter(url => url !== ''),
-        };
+            // 空のURL文字列をフィルターしてからAPIに送信
+            const filteredData = {
+                ...data,
+            youtubeLinks: data.youtubeLinks
+                ?.map(link => link.url?.trim()) // mapでオブジェクトからurl文字列を抽出
+                .filter(url => url !== ''),
+            siteLinks: data.siteLinks
+                ?.map(link => link.url?.trim()) // mapでオブジェクトからurl文字列を抽出
+                .filter(url => url !== ''),
+            };
 
-        const response = await fetch('/api/articles', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(filteredData),
-        });
+            const response = await fetch('/api/articles', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(filteredData),
+            });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || '記事の投稿に失敗しました');
-        }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || '記事の投稿に失敗しました');
+            }
 
-        alert('記事が正常に投稿されました！');
-        reset(); // フォームをリセット
-        setValue('content', ''); // MDEditorの値をクリア
-        setMarkdownContent(''); // MDEditorの内部状態をクリア
-        setIsExpanded(false); // 詳細オプションを閉じる
-        onArticlePosted(); // 記事一覧をリフレッシュしてモーダルを閉じる
+            alert('記事が正常に投稿されました！');
+            reset(); // フォームをリセット
+            setValue('content', ''); // MDEditorの値をクリア
+            setMarkdownContent(''); // MDEditorの内部状態をクリア
+            setIsExpanded(false); // 詳細オプションを閉じる
+            onArticlePosted(); // 記事一覧をリフレッシュしてモーダルを閉じる
         } catch (error) {
-        console.error('記事投稿エラー:', error);
-        alert(`記事の投稿に失敗しました`);
+            console.error('記事投稿エラー:', error);
+            alert(`記事の投稿に失敗しました`);
         } finally {
-        setIsSubmitting(false);
+            setIsSubmitting(false);
         }
     };
 
@@ -204,34 +204,18 @@ export function ArticleFormModal({ isOpen, onClose, onArticlePosted }: ArticleFo
                 {isExpanded && (
                     <div className="space-y-4 pt-2 border-t border-gray-200">
                         {/* 部門選択 */}
-                        <div>
-                            <Label className="block text-sm font-medium text-gray-700 mb-2">投稿先部門:</Label>
-                            <RadioGroup
-                                onValueChange={(value) => setValue('department', value as 'sales' | 'engineering' | 'pr' | 'all')}
-                                defaultValue={watch('department')}
-                                className="flex flex-wrap gap-4"
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="all" id="department-all" />
-                                    <Label htmlFor="department-all">全社</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="engineering" id="department-engineering" />
-                                    <Label htmlFor="department-engineering">開発</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="sales" id="department-sales" />
-                                    <Label htmlFor="department-sales">営業</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="pr" id="department-pr" />
-                                    <Label htmlFor="department-pr">広報</Label>
-                                </div>
-                            </RadioGroup>
-                            {errors.department && (
-                                <p className="text-red-500 text-xs mt-1">{errors.department.message}</p>
+                        <Controller
+                            control={control} // useForm() から受け取った「司令塔」オブジェクト
+                            name="department" // controlの中でもdepartmentという名前のフィールドを担当
+                            // 実際に画面に表示するコンポーネントを描画する」ための関数
+                            render={({ field, fieldState }) => ( // controlから受け取ったdepartment 用のデータ（field）と状態（fieldState）
+                                <DepartmentSelector
+                                    value={field.value} // 現在の選択肢
+                                    onChange={field.onChange} // setValue('department', ...) を内部でやってくれる
+                                    error={fieldState.error?.message} // バリデーションエラーメッセージ
+                                />
                             )}
-                        </div>
+                        />
 
                         {/* ユーザーID入力 (一時的) */}
                         <div>

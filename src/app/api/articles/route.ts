@@ -3,26 +3,29 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse, NextRequest } from 'next/server';
 
 // 記事一覧を取得するAPI, GET /api/articlesを構築
-// .httpメソッドでデータも取得できる
-export async function GET() {
-  // prismaを使うことで、prisma.article.findMany()でarticlesテーブルの全データを取得
-  try{
+// deptがあればその部門の記事のみ取得
+// [id] などの動的ルートでは、Next.js15以降はPromiseが必要になった(PPRによりidの値を取る前にレンダリングが終わる可能性のため)
+// 今回のような動的でない静的(固定)ルートではPromiseは不要
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const dept = searchParams.get('dept'); // 例: "sales"
+
     const articles = await prisma.article.findMany({
-      // 後に関連するauthorの情報も一緒に取得
+      where: dept ? { department: dept } : undefined, // deptがある場合のみwhere句を付与(departmentでフィルタリング)
       include: {
         author: true,
       },
       orderBy: {
         createdAt: 'desc',
-      }
+      },
     });
 
     return NextResponse.json(articles, { status: 200 });
-  }catch (error) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 });
   }
-
 }
 
 // 記事情報の生成API, POST /api/articlesを構築
@@ -41,7 +44,7 @@ export async function POST(request: NextRequest) {
       data: {
         title,
         content,
-        authorId, // 送られてきたIDで記事を作成
+        authorId,
         department,
         youtubeLinks,
         siteLinks,

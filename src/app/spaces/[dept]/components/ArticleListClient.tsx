@@ -1,3 +1,4 @@
+// app/spaces/[dept]/components/ArticleListClient.tsx
 'use client';
 
 import { useState } from 'react';
@@ -8,8 +9,9 @@ import { FileText, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import { Article } from '@/types';
-import { ArticleCard } from '@/app/spaces/components/articleCard'; // パスを調整
-import { ArticleFormModal } from '@/app/spaces/components/articleForm'; // パスを調整
+import { ArticleCard } from '@/app/spaces/components/articleCard';
+import { ArticleFormModal } from '@/app/spaces/components/articleForm';
+import { DeptSidebar } from '@/app/spaces/components/DeptSidebar';
 
 interface ArticleListClientProps {
     initialArticles: Article[]; // サーバーから渡される初期データ
@@ -47,52 +49,64 @@ export function ArticleListClient({ initialArticles, currentDept }: ArticleListC
 
     // useEffectやuseStateによるデータ取得ロジックは不要になります
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* ヘッダー */}
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-                <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">{departmentName(currentDept)}向け情報共有ナレッジ</h1>
-                        <p className="text-sm text-gray-600 mt-1">社内の知見を共有しましょう</p>
-                    </div>
+        <div className="flex h-screen bg-gray-50">
+            {/* サイドバー */}
+            <DeptSidebar />
 
-                    {/* ヘッダー右上の投稿ボタン */}
-                    <Button
-                        onClick={() => setIsModalOpen(true)}
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-md"
-                    >
-                        <Plus className="w-5 h-5" />
-                        <span>投稿</span>
-                    </Button>
-                </div>
-            </header>
-
-            {/* メインコンテンツ */}
-            <main className="max-w-6xl mx-auto px-4 py-6">
-                <div className="space-y-4">
-                    {initialArticles.length === 0 ? (
-                        <div className="text-center py-12">
-                            <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                            <p className="text-gray-600">この部門にはまだ記事がありません</p>
+            {/* メインコンテンツエリア */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                {/* ヘッダー */}
+                <header className="bg-white border-b border-gray-200 flex-shrink-0">
+                    <div className="px-6 py-4 flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">
+                                #{departmentName(currentDept)}
+                            </h1>
+                            <p className="text-sm text-gray-600 mt-1">
+                                {departmentName(currentDept)}向け情報共有ナレッジ
+                            </p>
                         </div>
-                    ) : (
-                        // アバターとカードをflexで横並びにするラッパー
-                        // アバター (カードの外に移動) 画像もしてないのでAvatarFallbaclで代替コンテンツ(頭文字1文字)を出力
-                        initialArticles.map((article) => (
-                            <div key={article.id} className="flex gap-4">
-                                <Avatar className="w-10 h-10 flex-shrink-0">
-                                    <AvatarFallback className="bg-orange-500 text-white">
-                                        {getInitial(article.author.name)}
-                                    </AvatarFallback>
-                                </Avatar>
 
-                                {/* 記事カード */}
-                                <ArticleCard article={article} />
-                            </div>
-                        ))
-                    )}
-                </div>
-            </main>
+                        <Button
+                            onClick={() => setIsModalOpen(true)}
+                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                        >
+                            <Plus className="w-5 h-5" />
+                            <span>投稿</span>
+                        </Button>
+                    </div>
+                </header>
+
+                {/* スクロール可能なメインコンテンツ */}
+                {/*overflow-y-autoによりmainタグ領域は収まり切らないときはスクロールバーが表示される */}
+                <main className="flex-1 overflow-y-auto">
+                    <div className="max-w-6xl mx-auto px-6 py-6">
+                        <div className="space-y-4">
+                            {initialArticles.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                                    <p className="text-gray-600">この部門にはまだ記事がありません</p>
+                                </div>
+                            ) : (
+                                // アバターとカードをflexで横並びにするラッパー
+                                // アバター (カードの外に移動) 画像もしてないのでAvatarFallbackで代替コンテンツ(頭文字1文字)を出力
+                                initialArticles.map((article) => (
+                                    <div key={article.id} className="flex gap-4">
+                                        <Avatar className="w-10 h-10 flex-shrink-0">
+                                            <AvatarFallback className="bg-orange-500 text-white">
+                                                {getInitial(article.author.name)}
+                                            </AvatarFallback>
+                                        </Avatar>
+
+                                        {/* 記事カード */}
+                                        <ArticleCard article={article} />
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </main>
+            </div>
 
             {/* モーダル */}
             <ArticleFormModal

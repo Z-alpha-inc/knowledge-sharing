@@ -3,6 +3,7 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { Hash } from 'lucide-react';
+import Image from 'next/image'; // 👈 1. Image コンポーネントをインポート
 
 interface Department {
   id: string;
@@ -28,13 +29,22 @@ export function DeptSidebar() {
   return (
     <aside className="w-64 bg-primary flex-shrink-0">
       <div className="p-4 border-b border-primary-foreground/10">
-        <h2 className="text-xl font-bold mb-1 text-primary-foreground">ナレッジスペース</h2>
-        <p className="text-sm text-primary-foreground/70">社内情報共有</p>
+        <div className="flex items-center gap-2 mb-1">
+            <Image
+                src="/icon.png" 
+                alt="ロゴ"
+                width={48}
+                height={48}
+                className="rounded-md" // 角丸にする
+            />
+            <h2 className="text-xl font-bold text-primary-foreground">インターンSHARE</h2>
+        </div>
+        <p className="text-sm text-primary-foreground/70">社内情報共有スペース</p>
       </div>
 
       <nav className="p-3">
         <div className="text-xs font-semibold text-primary-foreground/60 px-3 mb-2">
-          チャンネル
+            部門一覧
         </div>
         <div className="space-y-0.5">
           {DEPARTMENTS.map((dept) => (

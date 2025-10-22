@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { FileText, Plus } from 'lucide-react';
+import { FileText, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import { Article } from '@/types';
@@ -69,9 +69,9 @@ export function ArticleListClient({ initialArticles, currentDept }: ArticleListC
 
                         <Button
                             onClick={() => setIsModalOpen(true)}
-                            className="flex items-center gap-2 bg-primary hover:bg-primary/80 text-white shadow-md"
+                            className="flex items-center gap-2 bg-primary hover:bg-primary/80 text-white shadow-md h-12 px-10"
                         >
-                            <Plus className="w-5 h-5" />
+                            <Send className="w-5 h-5" />
                             <span>投稿</span>
                         </Button>
                     </div>

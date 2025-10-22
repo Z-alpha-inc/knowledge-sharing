@@ -23,15 +23,21 @@ async function getArticlesByDept(dept: string): Promise<Article[]> {
 }
 
 // ページのメインコンポーネント
-export default async function SpacePage({ params }: { params: { dept: string } }) {
+export default async function SpacePage({  
+  params 
+}: { 
+  params: Promise<{ dept: string }> // 動的URLなのでPromiseを追加
+}) {
+  // ★ 最初にparamsをawaitで解決する
+  const { dept } = await params;
   // サーバーサイドでURLパラメータに基づいて記事データを取得
-  const initialArticles = await getArticlesByDept(params.dept);
+  const initialArticles = await getArticlesByDept(dept);
 
   // 取得したデータをClient Componentにpropsとして渡す
   return (
     <ArticleListClient
       initialArticles={initialArticles}
-      currentDept={params.dept}
+      currentDept={dept}
     />
   );
 }

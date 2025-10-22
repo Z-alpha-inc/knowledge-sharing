@@ -63,7 +63,7 @@ export function ArticleListClient({ initialArticles, currentDept }: ArticleListC
                                 #{departmentName(currentDept)}
                             </h1>
                             <p className="text-sm text-gray-600 mt-1">
-                                {departmentName(currentDept)}向け情報共有ナレッジ
+                                {departmentName(currentDept)}向け情報共有スペース
                             </p>
                         </div>
 

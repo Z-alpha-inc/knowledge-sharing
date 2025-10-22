@@ -39,11 +39,11 @@ export function DeptSidebar() {
             />
             <h2 className="text-xl font-bold text-primary-foreground">インターンSHARE</h2>
         </div>
-        <p className="text-sm text-primary-foreground/70">社内情報共有スペース</p>
+        <p className="text-s text-primary-foreground/90">社内情報共有スペース</p>
       </div>
 
       <nav className="p-3">
-        <div className="text-xs font-semibold text-primary-foreground/60 px-3 mb-2">
+        <div className="text-xl font-semibold text-primary-foreground/90 px-3 mb-2">
             部門一覧
         </div>
         <div className="space-y-0.5">
@@ -53,11 +53,11 @@ export function DeptSidebar() {
               onClick={() => handleDeptChange(dept.id)}
               className={`
                 w-full flex items-center gap-2 px-3 py-1.5 rounded
-                transition-colors text-left text-sm
+                transition-colors text-left text-lg
                 ${
                   currentDept === dept.id
-                    ? 'bg-white text-primary font-semibold shadow-sm'
-                    : 'text-primary-foreground/90 hover:bg-primary-foreground/10'
+                    ? 'bg-white text-primary font-bold shadow-sm'
+                    : 'text-primary-foreground/100 hover:bg-primary-foreground/10'
                 }
               `}
             >

@@ -69,7 +69,7 @@ export function ArticleListClient({ initialArticles, currentDept }: ArticleListC
 
                         <Button
                             onClick={() => setIsModalOpen(true)}
-                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                            className="flex items-center gap-2 bg-primary hover:bg-primary/80 text-white shadow-md"
                         >
                             <Plus className="w-5 h-5" />
                             <span>投稿</span>

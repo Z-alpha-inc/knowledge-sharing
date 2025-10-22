@@ -26,28 +26,28 @@ export function DeptSidebar() {
   };
 
   return (
-    <aside className="w-64 bg-card border-r border-border flex-shrink-0">
-      <div className="p-4 border-b border-border">
-        <h2 className="text-xl font-bold mb-1 text-foreground">ナレッジスペース</h2>
-        <p className="text-sm text-muted-foreground">社内情報共有</p>
+    <aside className="w-64 bg-primary flex-shrink-0">
+      <div className="p-4 border-b border-primary-foreground/10">
+        <h2 className="text-xl font-bold mb-1 text-primary-foreground">ナレッジスペース</h2>
+        <p className="text-sm text-primary-foreground/70">社内情報共有</p>
       </div>
 
       <nav className="p-3">
-        <div className="text-xs font-semibold text-muted-foreground px-3 mb-2">
+        <div className="text-xs font-semibold text-primary-foreground/60 px-3 mb-2">
           チャンネル
         </div>
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {DEPARTMENTS.map((dept) => (
             <button
               key={dept.id}
               onClick={() => handleDeptChange(dept.id)}
               className={`
-                w-full flex items-center gap-2 px-3 py-2 rounded-md
+                w-full flex items-center gap-2 px-3 py-1.5 rounded
                 transition-colors text-left text-sm
                 ${
                   currentDept === dept.id
-                    ? 'bg-primary text-primary-foreground font-medium'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                    ? 'bg-white text-primary font-semibold shadow-sm'
+                    : 'text-primary-foreground/90 hover:bg-primary-foreground/10'
                 }
               `}
             >

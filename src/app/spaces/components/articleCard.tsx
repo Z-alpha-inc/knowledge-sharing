@@ -5,6 +5,7 @@ import MDEditor from '@uiw/react-md-editor';
 import { ArticleCardHeader } from '@/app/spaces/components/articleCardHeader';
 import { YouTubeCard } from '@/app/spaces/components/youtubeEmbed';
 import { LinkPreviewCard } from '@/app/spaces/components/linkPreviewCard';
+import { useRouter } from 'next/navigation';
 
 type ArticleCardProps = {
     article: Article;
@@ -12,8 +13,14 @@ type ArticleCardProps = {
 
 // 記事カードコンポーネント
 export const ArticleCard = ({ article }: ArticleCardProps) => {
+    const router = useRouter();
+    const handleCardClick = () => {
+        router.push(`/spaces/${article.department}/${article.id}`);
+    };
+    
     return (
         <Card
+            onClick={handleCardClick}
             className="p-4 hover:shadow-md transition-shadow cursor-pointer flex-1"
         >                  
             {/* コンテンツ */}

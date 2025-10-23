@@ -6,7 +6,9 @@ import { Article } from '@/types';
 async function getArticlesByDept(dept: string): Promise<Article[]> {
   try {
     // APIエンドポイントのURLを絶対パスで指定することが必須(サーバーコンポーネントの中である場合)
-    const baseUrl = 'http://localhost:3000';
+    const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/articles?dept=${dept}`, {
       cache: 'no-store', // 常に最新のデータを取得
     });

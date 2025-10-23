@@ -1,13 +1,21 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 
 type LinkPreviewProps = {
   url: string;
 };
 
+type LinkPreviewData = {
+  title?: string;
+  image?: {
+    url: string;
+  };
+};
+
 export const LinkPreviewCard = ({ url }: LinkPreviewProps) => {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<LinkPreviewData | null>(null);
 
   useEffect(() => {
     const fetchPreview = async () => {
@@ -48,9 +56,11 @@ export const LinkPreviewCard = ({ url }: LinkPreviewProps) => {
         </div>
         {data.image?.url && (
             <a href={url} target="_blank" rel="noopener noreferrer" className="block w-2/5 aspect-video flex-shrink-0 overflow-hidden">
-                <img
+                <Image
                     src={data.image.url}
                     alt={data.title || 'preview'}
+                    width={300}
+                    height={200}
                     className="w-full h-full object-cover"
                 />
             </a>

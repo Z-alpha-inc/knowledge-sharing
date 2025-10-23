@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react'; // 👈 Import useState
 import { Article } from '@/types';
 import { Card } from '@/components/ui/card';
 import MDEditor from '@uiw/react-md-editor';
@@ -7,7 +8,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { YouTubeCard } from '@/app/spaces/components/youtubeEmbed';
 import { LinkPreviewCard } from '@/app/spaces/components/linkPreviewCard';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Edit, Trash2, Play, Globe, } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Play, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button'; // 👈 Import Button for consistency
 
 type ArticleDetailViewProps = {
     article: Article;
@@ -15,6 +17,7 @@ type ArticleDetailViewProps = {
 
 export function ArticleDetailView({ article }: ArticleDetailViewProps) {
     const router = useRouter();
+    const [isDeleting, setIsDeleting] = useState(false); // 👈 Add deleting state
 
     const handleBack = () => {
         router.back();
@@ -34,26 +37,63 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
         return deptMap[dept] || dept;
     }
 
+    const handleDelete = async () => {
+        if (!window.confirm(`記事「${article.title}」を本当に削除しますか？`)) {
+            return;
+        }
+
+        setIsDeleting(true);
+        try {
+            const response = await fetch(`/api/articles/${article.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('記事の削除に失敗しました');
+            }
+
+            alert('記事を削除しました。');
+            router.push(`/spaces/${article.department}`);
+            router.refresh();
+
+        } catch (error) {
+            console.error('削除エラー:', error);
+            alert('記事の削除に失敗しました。');
+            setIsDeleting(false);
+        }
+    };
+
     return (
         <div className="max-w-4xl mx-auto p-6">
             {/* ヘッダー */}
             <div className="mb-6 flex items-center justify-between">
-                <button
+                <Button
+                    variant="ghost"
                     onClick={handleBack}
-                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
+                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition px-2 py-1 h-auto" // Adjust padding/height
                 >
                     <ArrowLeft className="w-5 h-5" />
                     <span>戻る</span>
-                </button>
+                </Button>
 
                 {/* アクションボタン（編集・削除） */}
                 <div className="flex gap-2">
-                    <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                    <Button variant="ghost" size="icon" className="text-blue-600 hover:bg-blue-50">
                         <Edit className="w-5 h-5" />
-                    </button>
-                    <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
-                        <Trash2 className="w-5 h-5" />
-                    </button>
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-600 hover:bg-red-50"
+                        onClick={handleDelete}
+                        disabled={isDeleting}  // 削除処理中にボタンを連打を防ぐ状態管理
+                    >
+                        {isDeleting ? (
+                            <span className="animate-spin h-5 w-5 border-2 border-red-600 border-t-transparent rounded-full"></span>
+                        ) : (
+                            <Trash2 className="w-5 h-5" />
+                        )}
+                    </Button>
                 </div>
             </div>
 
@@ -67,15 +107,15 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
                     </Avatar>
                     <div>
                         <p className="text-sm font-medium text-gray-900">{article.author.name}</p>
-                        <div className="flex items-center gap-4 text-xs text-gray-500 mt-0.5"> 
-                        <span>
-                            作成日: 
-                            <span className="ml-1">{new Date(article.createdAt).toLocaleDateString('ja-JP')}</span>
-                        </span>
-                        <span>
-                            最終更新日: 
-                            <span className="ml-1">{new Date(article.updatedAt).toLocaleDateString('ja-JP')}</span>
-                        </span>
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mt-0.5">
+                            <span>
+                                作成日:
+                                <span className="ml-1">{new Date(article.createdAt).toLocaleDateString('ja-JP')}</span>
+                            </span>
+                            <span>
+                                最終更新日:
+                                <span className="ml-1">{new Date(article.updatedAt).toLocaleDateString('ja-JP')}</span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -131,8 +171,8 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
                         </div>
                     </div>
                 )}
+
             </Card>
         </div>
     );
 }
-

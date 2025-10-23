@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react'; // 👈 Import useState
+import { useState } from 'react';
 import { Article } from '@/types';
 import { Card } from '@/components/ui/card';
 import MDEditor from '@uiw/react-md-editor';
@@ -9,7 +9,8 @@ import { YouTubeCard } from '@/app/spaces/components/youtubeEmbed';
 import { LinkPreviewCard } from '@/app/spaces/components/linkPreviewCard';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Edit, Trash2, Play, Globe } from 'lucide-react';
-import { Button } from '@/components/ui/button'; // 👈 Import Button for consistency
+import { Button } from '@/components/ui/button';
+import { ArticleEditModal } from '@/app/spaces/components/articleEditForm'; // 👈 インポート
 
 type ArticleDetailViewProps = {
     article: Article;
@@ -17,7 +18,8 @@ type ArticleDetailViewProps = {
 
 export function ArticleDetailView({ article }: ArticleDetailViewProps) {
     const router = useRouter();
-    const [isDeleting, setIsDeleting] = useState(false); // 👈 Add deleting state
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 👈 編集モーダルの状態
 
     const handleBack = () => {
         router.back();
@@ -35,7 +37,7 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
             all: '全社共有',
         };
         return deptMap[dept] || dept;
-    }
+    };
 
     const handleDelete = async () => {
         if (!window.confirm(`記事「${article.title}」を本当に削除しますか？`)) {
@@ -55,12 +57,22 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
             alert('記事を削除しました。');
             router.push(`/spaces/${article.department}`);
             router.refresh();
-
         } catch (error) {
             console.error('削除エラー:', error);
             alert('記事の削除に失敗しました。');
             setIsDeleting(false);
         }
+    };
+
+    // 👇 編集ボタンのハンドラー
+    const handleEditClick = () => {
+        setIsEditModalOpen(true);
+    };
+
+    // 👇 編集完了後のハンドラー
+    const handleArticleUpdated = () => {
+        setIsEditModalOpen(false);
+        router.refresh(); // ページをリフレッシュして最新データを表示
     };
 
     return (
@@ -70,7 +82,7 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
                 <Button
                     variant="ghost"
                     onClick={handleBack}
-                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition px-2 py-1 h-auto" // Adjust padding/height
+                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition px-2 py-1 h-auto"
                 >
                     <ArrowLeft className="w-5 h-5" />
                     <span>戻る</span>
@@ -78,7 +90,12 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
 
                 {/* アクションボタン（編集・削除） */}
                 <div className="flex gap-2">
-                    <Button variant="ghost" size="icon" className="text-blue-600 hover:bg-blue-50">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-blue-600 hover:bg-blue-50"
+                        onClick={handleEditClick} // 👈 編集ボタン
+                    >
                         <Edit className="w-5 h-5" />
                     </Button>
                     <Button
@@ -86,7 +103,7 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
                         size="icon"
                         className="text-red-600 hover:bg-red-50"
                         onClick={handleDelete}
-                        disabled={isDeleting}  // 削除処理中にボタンを連打を防ぐ状態管理
+                        disabled={isDeleting}
                     >
                         {isDeleting ? (
                             <span className="animate-spin h-5 w-5 border-2 border-red-600 border-t-transparent rounded-full"></span>
@@ -122,9 +139,7 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
 
                 {/* タイトル */}
                 <div className="flex items-center gap-3 mb-2 mt-4">
-                    <h1 className="text-4xl font-bold text-gray-900">
-                        {article.title}
-                    </h1>
+                    <h1 className="text-4xl font-bold text-gray-900">{article.title}</h1>
                     <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
                         {getDepartmentName(article.department)}
                     </span>
@@ -171,8 +186,15 @@ export function ArticleDetailView({ article }: ArticleDetailViewProps) {
                         </div>
                     </div>
                 )}
-
             </Card>
+
+            {/* 👇 編集モーダル */}
+            <ArticleEditModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onArticleUpdated={handleArticleUpdated}
+                article={article}
+            />
         </div>
     );
 }

@@ -14,9 +14,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.ctfassets.net',
+        hostname: '**',   // すべてのパスを許可
         port: '',
-        pathname: '/**', // images.ctfassets.net 以下のすべてのパスを許可
+        pathname: '/**', 
       },
     ],
   },

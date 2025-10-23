@@ -67,17 +67,15 @@ export function UrlFieldArray({
                             placeholder={placeholder}
                             className={`text-sm ${fieldErrors?.[index]?.url ? 'border-red-500' : 'border-gray-300'}`}
                         />
-                        {fields.length > 1 && (
-                            <Button
-                                type="button"
-                                onClick={() => remove(index)} // 内部の remove を呼ぶ
-                                variant="ghost"
-                                size="icon"
-                                className="text-gray-500 hover:text-red-500 h-8 w-8"
-                            >
-                                <X className="w-4 h-4" />
-                            </Button>
-                        )}
+                        <Button
+                            type="button"
+                            onClick={() => remove(index)} // 内部の remove を呼ぶ
+                            variant="ghost"
+                            size="icon"
+                            className="text-gray-500 hover:text-red-500 h-8 w-8"
+                        >
+                            <X className="w-4 h-4" />
+                        </Button>
                     </div>
                     {fieldErrors?.[index]?.url && (
                         <p className="text-red-500 text-xs mt-1">{fieldErrors[index].url.message}</p>
